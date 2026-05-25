@@ -3,6 +3,7 @@ import threading
 from collections import Counter
 from PyQt6.QtCore import QThread, pyqtSignal
 from src.utils.image_processing import applica_visione_notturna
+from src.utils.notifications import send_desktop_notification
 
 class VideoThread(QThread):
     new_frame_signal = pyqtSignal(object)
@@ -71,7 +72,16 @@ class VideoThread(QThread):
                             if should_log:
                                 detections = [{"label": c, "confidence": float(b.conf)} for b in results[0].boxes if (c := self.detector.model.names[int(b.cls)]) in stable_labels]
                                 if detections:
-                                    self.db_manager.log_detection(self.camera.get_camera_name(self.camera_index), detections, frame=frame)
+                                    cam_name = self.camera.get_camera_name(self.camera_index)
+                                    self.db_manager.log_detection(cam_name, detections, frame=frame)
+                                    
+                                    # INVIO NOTIFICA DESKTOP
+                                    labels_str = ", ".join(stable_labels)
+                                    send_desktop_notification(
+                                        title=f"⚠️ RILEVAMENTO: {cam_name}",
+                                        message=f"Oggetti rilevati: {labels_str}"
+                                    )
+                                    
                                     self.last_log_time = current_time
                                     self.last_logged_labels = stable_labels
                         else:

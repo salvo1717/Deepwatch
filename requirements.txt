@@ -12,3 +12,4 @@ motor
 beanie
 psutil
 numpy
+plyer

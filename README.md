@@ -12,6 +12,7 @@ Un sistema di visione artificiale avanzato e modulare basato su **YOLOv8**, prog
 ## ✨ Funzionalità Principali
 
 - **Monitoraggio Multi-Camera Simultaneo:** Capacità di gestire più flussi video in parallelo. Le telecamere possono monitorare l'ambiente in background anche quando non sono visualizzate direttamente.
+- **Notifiche Desktop Real-Time:** Ricevi avvisi immediati sul tuo sistema operativo quando viene rilevato un oggetto sospetto, anche se l'app è ridotta a icona.
 - **Rilevamento Intelligente dell'Hardware:** Analisi automatica dell'hardware host per configurare l'ambiente di esecuzione ottimale (NVIDIA CUDA, AMD DirectML, Intel OpenVINO, Apple Metal MPS o CPU).
 - **Gestione Asincrona dei Flussi:** Cambio telecamera fluido e non bloccante. L'interfaccia rimane reattiva durante le operazioni hardware lente grazie a un'architettura multi-thread.
 - **Visual Detection Logs:** Sistema di log avanzato basato su **MongoDB** che memorizza screenshot e metadati dei rilevamenti (data, ora, oggetti, confidenza).
