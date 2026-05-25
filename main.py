@@ -5,7 +5,7 @@ import platform
 import threading
 import time
 import traceback
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QSystemTrayIcon, QStyle
 from PyQt6.QtCore import pyqtSignal, Qt, QTimer, QObject
 from qt_material import apply_stylesheet
 from dotenv import load_dotenv
@@ -56,10 +56,19 @@ class CameraSwitchWorker(QObject):
             self.error.emit(index)
 
 class SentinelApp(QMainWindow):
+    notification_signal = pyqtSignal(str, str)
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("DEEPWATCH - AI Security")
         self.setMinimumSize(1200, 800)
+        
+        # Tray Icon per Notifiche
+        self.tray_icon = QSystemTrayIcon(self)
+        self.tray_icon.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon))
+        self.tray_icon.show()
+        
+        self.notification_signal.connect(self.show_notification)
         
         # Hardware & Data
         if platform.system() == "Windows":
@@ -79,11 +88,22 @@ class SentinelApp(QMainWindow):
         
         self.init_views()
 
+    def show_notification(self, title, message):
+        """Visualizza una notifica di sistema tramite tray icon."""
+        self.tray_icon.showMessage(
+            title,
+            message,
+            QSystemTrayIcon.MessageIcon.Warning,
+            5000 # 5 secondi
+        )
+
     def _get_or_create_thread(self, index):
         """Metodo sincrono (usato solo all'avvio o in show_live)."""
         if index not in self.video_threads:
             self.camera.set_camera(index)
             thread = VideoThread(self.camera, index, self.detector, self.db_manager)
+            # Collega il segnale di notifica del thread a quello dell'app
+            thread.notification_requested.connect(self.notification_signal.emit)
             self.video_threads[index] = thread
             thread.start()
         return self.video_threads[index]
@@ -220,6 +240,9 @@ class SentinelApp(QMainWindow):
 
         thread.is_active_view = True
         thread.new_frame_signal.connect(self.process_frame)
+        # Assicura connessione notifica (nel caso sia stato creato asincronamente)
+        try: thread.notification_requested.connect(self.notification_signal.emit, Qt.ConnectionType.UniqueConnection)
+        except: pass
         
         if hasattr(self, 'live_view'):
             self.live_view.cam_select.setEnabled(True)

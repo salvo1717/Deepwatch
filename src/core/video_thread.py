@@ -3,10 +3,10 @@ import threading
 from collections import Counter
 from PyQt6.QtCore import QThread, pyqtSignal
 from src.utils.image_processing import applica_visione_notturna
-from src.utils.notifications import send_desktop_notification
 
 class VideoThread(QThread):
     new_frame_signal = pyqtSignal(object)
+    notification_requested = pyqtSignal(str, str) # title, message
 
     def __init__(self, camera_manager, camera_index, detector, db_manager):
         super().__init__()
@@ -75,11 +75,11 @@ class VideoThread(QThread):
                                     cam_name = self.camera.get_camera_name(self.camera_index)
                                     self.db_manager.log_detection(cam_name, detections, frame=frame)
                                     
-                                    # INVIO NOTIFICA DESKTOP
+                                    # EMISSIONE SEGNALE NOTIFICA
                                     labels_str = ", ".join(stable_labels)
-                                    send_desktop_notification(
-                                        title=f"⚠️ RILEVAMENTO: {cam_name}",
-                                        message=f"Oggetti rilevati: {labels_str}"
+                                    self.notification_requested.emit(
+                                        f"⚠️ RILEVAMENTO: {cam_name}",
+                                        f"Oggetti rilevati: {labels_str}"
                                     )
                                     
                                     self.last_log_time = current_time

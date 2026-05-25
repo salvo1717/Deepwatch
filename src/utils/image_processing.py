@@ -8,7 +8,7 @@ def applica_visione_notturna(immagine):
     lab = cv2.cvtColor(immagine, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     
-    # Applica CLAHE al canale della luminosità (L)
+    # Applica CLAHE (Contrast Limited Adaptive Histogram Equalization) al canale L
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
     cl = clahe.apply(l)
 

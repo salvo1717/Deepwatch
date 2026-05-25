@@ -51,12 +51,11 @@ class DatabaseManager:
                 def append_metadata(self, metadata): pass
                 client.__class__.append_metadata = append_metadata
 
-            # Recupera il database (accesso corretto per Motor)
+            # Recupera il database
             self.db = client.get_database("DeepWatchDB")
             
             await init_beanie(database=self.db, document_models=[User, Detection])
             
-            # Assicura admin di default
             await self._ensure_default_user()
             self.is_initialized = True
             print("✅ Beanie ODM inizializzato con successo.")
@@ -70,7 +69,6 @@ class DatabaseManager:
             admin = User(
                 username="admin",
                 password_hash=self._hash_password("admin123"),
-                company="DeepWatch Pro"
             )
             await admin.insert()
             print("ℹ️ Creato utente admin predefinito via Beanie")
@@ -92,7 +90,7 @@ class DatabaseManager:
         future = asyncio.run_coroutine_threadsafe(_auth_task(), self.loop)
         return future.result()
 
-    def register_user(self, username, password, company="DeepWatch Security"):
+    def register_user(self, username, password):
         """Crea un nuovo utente nel database."""
         if not self.is_initialized:
             print("❌ Registrazione fallita: Database non inizializzato")
@@ -106,11 +104,10 @@ class DatabaseManager:
                     print(f"⚠️ Utente {username} già esistente")
                     return False, "Username già in uso"
                 
-                print(f"📝 Creazione nuovo utente: {username} per {company}")
+                print(f"📝 Creazione nuovo utente: {username}")
                 new_user = User(
                     username=username,
-                    password_hash=self._hash_password(password),
-                    company=company
+                    password_hash=self._hash_password(password)
                 )
                 await new_user.insert()
                 print(f"✅ Utente {username} salvato con successo!")
@@ -204,7 +201,6 @@ class DatabaseManager:
                     }}
                 ]
                 
-                # Usa direttamente motor per l'aggregazione per evitare ambiguità con Beanie
                 coll = self.db.get_collection("detections")
                 cursor = coll.aggregate(pipeline)
                 agg_results = await cursor.to_list(length=1)
