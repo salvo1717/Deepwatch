@@ -1,0 +1,34 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+build/
+dist/
+
+# --- Database & Secrets ---
+.env
+
+# --- Models & Heavy Files ---
+models/*.pt
+models/*.onnx
+models/*_openvino_model/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- System ---
+.DS_Store
+Thumbs.db
+
+# --- Project Specific ---
+config/app_state.json
+crash_report.txt
+test_db.py
+*.log

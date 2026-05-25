@@ -1,0 +1,14 @@
+torch
+torchvision
+ultralytics
+opencv-python
+onnxruntime
+openvino
+nncf
+PyQt6
+qt-material
+python-dotenv
+motor
+beanie
+psutil
+numpy
