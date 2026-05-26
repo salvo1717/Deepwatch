@@ -14,7 +14,7 @@ def setup_environment():
 
 # --- COSTANTI ---
 OGGETTI_DA_RILEVARE = [
-    "person", "face", "hand",           # Identità
+    "person", "face", "hand",          # Identità
     "glasses", "hat", "cap",            # Tratti distintivi
     "watch", "cell phone",              # Oggetti di valore
     "backpack", "handbag", "suitcase",  # Bagagli
@@ -24,5 +24,6 @@ OGGETTI_DA_RILEVARE = [
 ]
 
 PATH_MODELLO_DEFAULT = "models/yolov8s-worldv2.pt"
+PATH_MODELLO_SAFE = "models/yolov8s.pt"
 PATH_MODELLO_ONNX = "models/yolov8s-worldv2_jolly.onnx"
 FOLDER_MODELLO_OPENVINO = "models/yolov8s-worldv2_openvino_model"

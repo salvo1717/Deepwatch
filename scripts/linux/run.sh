@@ -8,8 +8,8 @@ fi
 
 source venv/bin/activate
 
-# Controllo se le dipendenze sono installate
-if ! python3 -c "import ultralytics, cv2, PyQt6" &> /dev/null; then
+# Controllo rapido se le dipendenze base sono installate (senza importarle)
+if ! python3 -c "import importlib.metadata; [importlib.metadata.version(pkg) for pkg in ['ultralytics', 'opencv-python', 'PyQt6']]" &> /dev/null; then
     echo "[X] Errore: Le dipendenze non sembrano essere installate correttamente."
     echo "Per favore, esegui prima 'bash scripts/linux/installazione.sh'."
     exit 1

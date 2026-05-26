@@ -1,12 +1,26 @@
 import os
 import platform
-import torch
 import threading
-from ultralytics import YOLO
+# Rimossi import pesanti dal top-level per non bloccare l'avvio della UI
+# import torch
+# from ultralytics import YOLO
 from src.config.settings import OGGETTI_DA_RILEVARE, PATH_MODELLO_DEFAULT, PATH_MODELLO_ONNX, FOLDER_MODELLO_OPENVINO
+
+# Placeholder per caricamento lazy
+torch = None
+YOLO = None
 
 class Detector:
     def __init__(self):
+        global torch, YOLO
+        if torch is None:
+            print("   [~] Caricamento PyTorch e moduli AI...")
+            import torch as _torch
+            torch = _torch
+        if YOLO is None:
+            from ultralytics import YOLO as _YOLO
+            YOLO = _YOLO
+
         self.device = None
         self.risoluzione = 640
         self.path_modello = PATH_MODELLO_DEFAULT

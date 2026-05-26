@@ -75,18 +75,29 @@ class SentinelApp(QMainWindow):
             ctypes.windll.ole32.CoInitialize(None)
             
         self.db_manager = DatabaseManager(os.getenv("MONGODB_URI"))
-        self.detector = Detector()
+        self.detector = None
         self.camera = Camera(0)
-        
+
+        # Caricamento AI in background per non bloccare la UI all'avvio
+        threading.Thread(target=self._init_detector, daemon=True).start()
+
         # Mappa dei thread attivi per camera {index: VideoThread}
         self.video_threads = {}
         self.is_switching = False
-        
+
         # UI Stack
         self.stack = QStackedWidget()
         self.setCentralWidget(self.stack)
-        
+
         self.init_views()
+
+    def _init_detector(self):
+        """Inizializza il motore AI in un thread separato."""
+        try:
+            from src.core.detector import Detector
+            self.detector = Detector()
+        except Exception as e:
+            print(f"Errore inizializzazione AI: {e}")
 
     def show_notification(self, title, message):
         """Visualizza una notifica di sistema tramite tray icon."""
@@ -99,6 +110,11 @@ class SentinelApp(QMainWindow):
 
     def _get_or_create_thread(self, index):
         """Metodo sincrono (usato solo all'avvio o in show_live)."""
+        # Assicuriamoci che il detector sia pronto
+        if self.detector is None:
+            from src.core.detector import Detector
+            self.detector = Detector()
+
         if index not in self.video_threads:
             self.camera.set_camera(index)
             thread = VideoThread(self.camera, index, self.detector, self.db_manager)
