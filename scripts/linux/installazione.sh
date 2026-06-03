@@ -36,5 +36,3 @@ echo ""
 echo "Puoi avviare il programma in futuro usando:"
 echo "--> ./scripts/linux/run.sh"
 echo ""
-echo "Avvio del sistema in corso..."
-python3 main.py
