@@ -41,6 +41,3 @@ echo.
 echo Puoi avviare il programma in futuro usando:
 echo --^> scripts\windows\run.bat
 echo.
-echo Avvio del sistema in corso...
-python main.py
-pause
