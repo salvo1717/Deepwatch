@@ -79,7 +79,10 @@ class DatabaseManager:
     def authenticate(self, username, password):
         """Metodo sincrono per la UI (usa il loop asincrono internamente)."""
         if not self.is_initialized:
-            return False, "Database non ancora pronto"
+            err_msg = "Database non ancora pronto"
+            if self.init_error:
+                err_msg += f" ({self.init_error})"
+            return False, err_msg
             
         async def _auth_task():
             user = await User.find_one(User.username == username)
@@ -94,7 +97,10 @@ class DatabaseManager:
         """Crea un nuovo utente nel database."""
         if not self.is_initialized:
             print("❌ Registrazione fallita: Database non inizializzato")
-            return False, "Database non ancora pronto"
+            err_msg = "Database non ancora pronto"
+            if self.init_error:
+                err_msg += f" ({self.init_error})"
+            return False, err_msg
 
         async def _register_task():
             try:
